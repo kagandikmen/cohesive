@@ -20,6 +20,7 @@ module soc
     wire [31:0] instr;
     wire [31:0] rdata;
     wire if_en;
+    wire mem_enb;
     wire [3:0] wr_mode;
     wire [12:0] mem_addra;
     wire [DMEM_ADDR_WIDTH-1:0] mem_addrb;
@@ -36,7 +37,10 @@ module soc
         .sysclk(sysclk),
         .mem_instr_i(instr),
         .mem_rdata_i(rdata),
+        .mem_rdata_valid_i(1'b1),
+        .mem_wdata_valid_i(1'b1),
         .mem_if_en_o(if_en),
+        .mem_enb_o(mem_enb),
         .mem_wr_mode_o(wr_mode),
         .mem_addra_o(mem_addra),
         .mem_addrb_o(mem_addrb),
@@ -56,7 +60,7 @@ module soc
         .wea(),
         .web(wr_mode),
         .ena(if_en),
-        .enb(1'b1),
+        .enb(mem_enb),
         .rsta(),
         .rstb(),
         .regcea(),
