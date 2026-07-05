@@ -19,12 +19,17 @@ module soc
 
     wire [31:0] instr;
     wire [31:0] rdata;
+    wire rdata_valid, wdata_valid;
     wire if_en;
     wire mem_enb;
     wire [3:0] wr_mode;
     wire [12:0] mem_addra;
     wire [DMEM_ADDR_WIDTH-1:0] mem_addrb;
     wire [OP_LENGTH-1:0] mem_dinb;
+
+    wire [31:0] rdata_wire;
+    reg [31:0] rdata_buf [1:0];
+    reg [1:0] rdata_valid_buf, wdata_valid_buf;
 
     cpu #(
         .DMEM_ADDR_WIDTH(DMEM_ADDR_WIDTH),
@@ -37,8 +42,8 @@ module soc
         .sysclk(sysclk),
         .mem_instr_i(instr),
         .mem_rdata_i(rdata),
-        .mem_rdata_valid_i(1'b1),
-        .mem_wdata_valid_i(1'b1),
+        .mem_rdata_valid_i(rdata_valid),
+        .mem_wdata_valid_i(wdata_valid),
         .mem_if_en_o(if_en),
         .mem_enb_o(mem_enb),
         .mem_wr_mode_o(wr_mode),
@@ -66,8 +71,32 @@ module soc
         .regcea(),
         .regceb(),
         .douta(instr),
-        .doutb(rdata)
+        .doutb(rdata_wire)
     );
+
+    integer i;
+
+    // temporary output delay to test CPU-internal stalling
+    always @(posedge sysclk) begin
+        rdata_buf[1] <= rdata_wire;
+        rdata_valid_buf[1] <= mem_enb && !(|wr_mode);
+        wdata_valid_buf[1] <= mem_enb && |wr_mode;
+
+        rdata_buf[0] <= rdata_buf[1];
+        rdata_valid_buf[0] <= rdata_valid_buf[1];
+        wdata_valid_buf[0] <= wdata_valid_buf[1];
+
+        if(rst) begin
+            for(i=0; i<2; i=i+1) begin
+                rdata_buf[i] <= 'b0;
+                rdata_valid_buf[i] <= 'b0;
+                wdata_valid_buf[i] <= 'b0;
+            end
+        end
+    end
+    assign rdata = rdata_buf[0];
+    assign rdata_valid = rdata_valid_buf[0];
+    assign wdata_valid = wdata_valid_buf[0];
 
     assign led = |wr_mode;
 

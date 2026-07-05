@@ -8,7 +8,7 @@
 module soc_tb
     #(
         parameter MEM_INIT_FILE = "init.mem",
-        parameter TOHOST_ADDR   = 16384,
+        parameter TOHOST_ADDR   = 16448,
         parameter RESET_ADDR    = 32'h00000000
     )(
     );
