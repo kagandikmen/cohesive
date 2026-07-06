@@ -1,6 +1,6 @@
 // Top SoC module
 // Created:     2026-07-04
-// Modified:    2026-07-05
+// Modified:    2026-07-07
 // Author:      Kagan Dikmen
 
 module soc
@@ -26,10 +26,6 @@ module soc
     wire [12:0] mem_addra;
     wire [DMEM_ADDR_WIDTH-1:0] mem_addrb;
     wire [OP_LENGTH-1:0] mem_dinb;
-
-    wire [31:0] rdata_wire;
-    reg [31:0] rdata_buf [1:0];
-    reg [1:0] rdata_valid_buf, wdata_valid_buf;
 
     cpu #(
         .DMEM_ADDR_WIDTH(DMEM_ADDR_WIDTH),
@@ -71,32 +67,11 @@ module soc
         .regcea(),
         .regceb(),
         .douta(instr),
-        .doutb(rdata_wire)
+        .doutb(rdata)
     );
 
-    integer i;
-
-    // temporary output delay to test CPU-internal stalling
-    always @(posedge sysclk) begin
-        rdata_buf[1] <= rdata_wire;
-        rdata_valid_buf[1] <= mem_enb && !(|wr_mode);
-        wdata_valid_buf[1] <= mem_enb && |wr_mode;
-
-        rdata_buf[0] <= rdata_buf[1];
-        rdata_valid_buf[0] <= rdata_valid_buf[1];
-        wdata_valid_buf[0] <= wdata_valid_buf[1];
-
-        if(rst) begin
-            for(i=0; i<2; i=i+1) begin
-                rdata_buf[i] <= 'b0;
-                rdata_valid_buf[i] <= 'b0;
-                wdata_valid_buf[i] <= 'b0;
-            end
-        end
-    end
-    assign rdata = rdata_buf[0];
-    assign rdata_valid = rdata_valid_buf[0];
-    assign wdata_valid = wdata_valid_buf[0];
+    assign rdata_valid = mem_enb;
+    assign wdata_valid = mem_enb && |wr_mode;
 
     assign led = |wr_mode;
 
