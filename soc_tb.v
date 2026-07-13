@@ -37,6 +37,8 @@ module soc_tb
         #20;
         rst = ~rst;
 
+`ifdef UT
+
         wait (^soc_ut.mem.BRAM[TOHOST_ADDR[14:2]] !== 1'bx);
 
         wait (|soc_ut.mem.BRAM[TOHOST_ADDR[14:2]] !== 1'b0);
@@ -47,6 +49,8 @@ module soc_tb
             $display("Note: Failure!");
         
         $finish;
+
+`endif
         
     end
 
