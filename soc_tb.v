@@ -1,6 +1,6 @@
 // Testbench for the top SoC module
 // Created:     2026-07-05
-// Modified:    2026-07-05
+// Modified:    2026-07-13
 // Author:      Kagan Dikmen
 
 `timescale 1ns/1ns
@@ -8,7 +8,7 @@
 module soc_tb
     #(
         parameter MEM_INIT_FILE = "init.mem",
-        parameter TOHOST_ADDR   = 16448,
+        parameter TOHOST_ADDR   = 16384,
         parameter RESET_ADDR    = 32'h00000000
     )(
     );
