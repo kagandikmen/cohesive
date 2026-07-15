@@ -1,6 +1,6 @@
 // Top SoC module
 // Created:     2026-07-04
-// Modified:    2026-07-07
+// Modified:    2026-07-15
 // Author:      Kagan Dikmen
 
 module soc
@@ -14,6 +14,7 @@ module soc
     )(
     input rst,
     input sysclk,
+    input ext_irq_i,
     output wire led     // dummy signal to prevent overoptimization
     );
 
@@ -45,7 +46,9 @@ module soc
         .mem_wr_mode_o(wr_mode),
         .mem_addra_o(mem_addra),
         .mem_addrb_o(mem_addrb),
-        .mem_dinb_o(mem_dinb)
+        .mem_dinb_o(mem_dinb),
+        .timer_irq_i(1'b0),     // future work
+        .ext_irq_i(ext_irq_i)
     );
 
     // NOTE: a for program memory, b for data memory

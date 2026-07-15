@@ -1,6 +1,6 @@
 // Testbench for the top SoC module
 // Created:     2026-07-05
-// Modified:    2026-07-13
+// Modified:    2026-07-15
 // Author:      Kagan Dikmen
 
 `timescale 1ns/1ns
@@ -13,7 +13,7 @@ module soc_tb
     )(
     );
 
-    reg rst, sysclk_t;
+    reg rst, sysclk_t, ext_irq_i_t;
     wire led_t;
 
     soc #(.DMEM_ADDR_WIDTH(13), .DMEM_DATA_WIDTH(32), .OP_LENGTH(32), .PC_WIDTH(16), .MEM_INIT_FILE(MEM_INIT_FILE), .RESET_ADDR(RESET_ADDR)) 
@@ -21,6 +21,7 @@ module soc_tb
         (
             .rst(rst),
             .sysclk(sysclk_t),
+            .ext_irq_i(ext_irq_i_t),
             .led(led_t)
         );
     
@@ -30,6 +31,7 @@ module soc_tb
     begin
         rst = 1'b0;
         sysclk_t = 1'b0;
+        ext_irq_i_t = 1'b0;
         
         #4;
         rst = ~rst;
