@@ -1,11 +1,11 @@
 // Top SoC module
 // Created:     2026-07-04
-// Modified:    2026-07-15
+// Modified:    2026-09-14
 // Author:      Kagan Dikmen
 
 module soc
     #(
-    parameter DMEM_ADDR_WIDTH  = 13,
+    parameter DMEM_ADDR_WIDTH  = 16,
     parameter DMEM_DATA_WIDTH  = 32,
     parameter OP_LENGTH = 32,
     parameter PC_WIDTH = 16,
@@ -24,7 +24,7 @@ module soc
     wire if_en;
     wire mem_enb;
     wire [3:0] wr_mode;
-    wire [12:0] mem_addra;
+    wire [DMEM_ADDR_WIDTH-1:0] mem_addra;
     wire [DMEM_ADDR_WIDTH-1:0] mem_addrb;
     wire [OP_LENGTH-1:0] mem_dinb;
 
@@ -53,6 +53,10 @@ module soc
 
     // NOTE: a for program memory, b for data memory
     bram_dual #(
+        .NB_COL(4),
+        .COL_WIDTH(8),
+        .RAM_DEPTH(65536),      // 128 KiB for program memory, 128 KiB for data memory
+        .RAM_PERFORMANCE("LOW_LATENCY"),
         .INIT_FILE(MEM_INIT_FILE)
     ) mem (
         .addra(mem_addra),
