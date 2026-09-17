@@ -1,6 +1,6 @@
 // Testbench for the top SoC module
 // Created:     2026-07-05
-// Modified:    2026-09-14
+// Modified:    2026-09-17
 // Author:      Kagan Dikmen
 
 `timescale 1ns/1ns
@@ -52,6 +52,7 @@ module soc_tb
         else
             $display("Note: Failure!");
         
+        #100;
         $finish;
 
 `endif
