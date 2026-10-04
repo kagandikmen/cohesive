@@ -31,6 +31,7 @@ module soc
     wire [OP_LENGTH-1:0] mem_dinb;
 
     wire sw_irq, timer_irq, generated_ext_irq, cpu_ext_irq;
+    wire [63:0] mtime;
 
     assign cpu_ext_irq = ext_irq_i | generated_ext_irq;
 
@@ -69,7 +70,8 @@ module soc
         .mem_dinb_o(mem_dinb),
         .timer_irq_i(timer_irq),
         .ext_irq_i(cpu_ext_irq),
-        .sw_irq_i(sw_irq)
+        .sw_irq_i(sw_irq),
+        .time_i(mtime)
     );
 
     // NOTE: a for program memory, b for data memory
@@ -113,7 +115,8 @@ module soc
         .rvalid_o(irq_rvalid),
         .sw_irq_o(sw_irq),
         .timer_irq_o(timer_irq),
-        .ext_irq_o(generated_ext_irq)
+        .ext_irq_o(generated_ext_irq),
+        .mtime_o(mtime)
     );
 
     assign led = |wr_mode;

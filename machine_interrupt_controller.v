@@ -1,6 +1,6 @@
 // Machine interrupt controller for Cohesive SoC wrapper
 // Created:     2026-10-03
-// Modified:    2026-10-03
+// Modified:    2026-10-04
 // Author:      Kagan Dikmen
 
 module machine_interrupt_controller
@@ -19,7 +19,8 @@ module machine_interrupt_controller
 
         output  wire        sw_irq_o,
         output  wire        timer_irq_o,
-        output  wire        ext_irq_o
+        output  wire        ext_irq_o,
+        output  wire [63:0] mtime_o
     );
 
     localparam [31:0] MSIP_ADDR             = 32'h0200_0000;
@@ -36,6 +37,9 @@ module machine_interrupt_controller
     assign sw_irq_o = msip;
     assign timer_irq_o = (mtime >= mtimecmp);
     assign ext_irq_o = meip;
+    assign mtime_o = (req_i && |we_i && addr_i == MTIME_LO_ADDR) ? {mtime[63:32], apply_byte_enables(mtime[31:0], wdata_i, we_i)} :
+                     (req_i && |we_i && addr_i == MTIME_HI_ADDR) ? {apply_byte_enables(mtime[63:32], wdata_i, we_i), mtime[31:0]} :
+                     mtime;
 
     always @(posedge clk) begin
         if(rst) begin
